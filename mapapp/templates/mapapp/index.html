@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>내 주변 전기차 충전소 찾기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'mapapp/style.css' %}">
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5c2e50c05b44f33a9c61fedf9c1f4c74&libraries=services"></script>
+</head>
+<body>
+  <header>
+    <h2>📍 내 주변 전기차 충전소</h2>
+    <button id="reload-btn">🔄 위치 재탐색</button>
+  </header>
+
+  <main>
+    <div id="map"></div>
+
+    <section id="station-list">
+      <h3>🚗 가까운 충전소 목록</h3>
+      <div id="list-container">로딩 중...</div>
+    </section>
+  </main>
+
+  <script src="{% static 'mapapp/script.js' %}" defer></script>
+</body>
+</html>

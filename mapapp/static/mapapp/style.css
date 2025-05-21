@@ -1,0 +1,74 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f0f2f5;
+  color: #333;
+}
+
+header {
+  background: #ffffff;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+#reload-btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#reload-btn:hover {
+  background: #0056b3;
+}
+
+main {
+  padding: 16px;
+}
+
+#map {
+  width: 100%;
+  height: 400px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+
+#station-list {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+
+#station-list h3 {
+  margin-top: 0;
+}
+
+.station-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background: #f9f9f9;
+  transition: background 0.2s ease;
+}
+
+.station-item:hover {
+  background: #e8f0fe;
+  cursor: pointer;
+}
