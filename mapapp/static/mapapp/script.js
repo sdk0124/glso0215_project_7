@@ -15,7 +15,7 @@ const KEPCO_METRO_CD_FROM_KAKAO_NAME = {
     "강원특별자치도": "32",
     "충청북도": "33",
     "충청남도": "34",
-    "전라북도": "35",     // 카카오가 "전북특별자치도"로 반환하면 키를 맞춰야 함
+    "전라북도": "35",       // 카카오가 "전북특별자치도"로 반환하면 키를 맞춰야 함
     "전북특별자치도": "35",
     "전라남도": "36",
     "경상북도": "37",
@@ -65,7 +65,7 @@ function loadMapAndStations() {
         console.log('카카오 coord2RegionCode 전체 결과:', result[0]);
     
         if (result.length > 0 && result[0].code) {
-          const kakaoFullRegionCode = result[0].code;         // 예: "2711012400"
+          const kakaoFullRegionCode = result[0].code;        // 예: "2711012400"
           const kakaoMetroName = result[0].region_1depth_name;  // 예: "대구광역시"
           // const kakaoSigunguName = result[0].region_2depth_name; // 예: "중구" (시군구 매핑이 가능해지면 사용)
 
@@ -115,7 +115,6 @@ function loadMapAndStations() {
 }
 
 
-
 // 지정된 지역 코드로 충전소 정보를 서버에 요청하고 지도를 업데이트하는 함수
 function fetchStations(currentLat, currentLon, metroCd, cityCd) {
     const listContainer = document.getElementById('list-container');
@@ -133,7 +132,7 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
         center: new kakao.maps.LatLng(currentLat, currentLon),
         level: 5
     };
-    const map = new kakao.maps.Map(mapContainer, mapOption);
+    const map = new kakao.maps.Map(mapContainer, mapOption); // map 변수를 여기서 선언
     const zoomControl = new kakao.maps.ZoomControl();
     map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
@@ -144,7 +143,7 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
     });
 
     const stationMarkerImage = new kakao.maps.MarkerImage(
-        'https://cdn-icons-png.flaticon.com/512/3103/3103446.png',
+        '',
         new kakao.maps.Size(32, 32)
     );
 
@@ -160,17 +159,14 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
         })
         .then(data => {
             console.log("KEPCO API 응답 데이터:", data);
-            // KEPCO 응답에서 실제 충전소 목록 배열 가져오기 (KEPCO 응답 구조에 따라 data.data 또는 data 등일 수 있음)
             const stationsFromKepco = data.data; 
 
             if (stationsFromKepco && stationsFromKepco.length > 0) {
-                // 각 충전소의 주소를 좌표로 변환하는 Promise 배열 생성
                 const geocodingPromises = stationsFromKepco.map(station => {
                     return new Promise((resolve) => {
-                        const stationAddress = station.stnAddr; // KEPCO 응답의 주소 필드명 (확인 필요!)
-                        const stationName = station.stnPlace || "이름없음"; // KEPCO 응답의 이름 필드명 (확인 필요, 특히 가끔 생김)
-                        // 기타 필요한 정보도 station 객체에서 미리 추출 (예: station.rapidCnt, station.slowCnt)
-                        const originalStationData = { ...station }; // 원본 KEPCO station 데이터 복사
+                        const stationAddress = station.stnAddr; 
+                        const stationName = station.stnPlace || "이름없음"; 
+                        const originalStationData = { ...station }; 
 
                         if (stationAddress) {
                             geocoderForStations.addressSearch(stationAddress, function(results, status) {
@@ -184,10 +180,10 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
                                         lat: lat,
                                         lon: lon,
                                         distance: distance,
-                                        originalData: originalStationData // 원본 KEPCO 데이터 포함
+                                        originalData: originalStationData 
                                     });
                                 } else {
-                                    console.warn(`주소 지오코딩 실패: ${stationAddress}`, status);
+                                    console.warn(`주소 지오코딩 실패: ${stationAddress}`, status); //자주 발생하는 오류 경고, 근처가 로딩이 안되는 경우 전체 수정 필요
                                     resolve({ name: `${stationName} (${stationAddress})`, distance: null, lat: null, lon: null, originalData: originalStationData });
                                 }
                             });
@@ -198,12 +194,10 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
                     });
                 });
 
-                // 모든 주소 변환 Promise가 완료될 때까지 기다림
                 Promise.all(geocodingPromises)
                     .then(placeDetails => {
-                        listContainer.innerHTML = ''; // 이전 목록 초기화
+                        listContainer.innerHTML = ''; 
 
-                        // 거리순으로 정렬 (좌표 변환 실패한 항목은 뒤로)
                         placeDetails.sort((a, b) => {
                             if (a.distance === null) return 1;
                             if (b.distance === null) return -1;
@@ -215,20 +209,15 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
                             nearestPlaceForHighlight = placeDetails[0];
                         }
                         
-                        // 지도에 마커 표시 및 목록 생성
                         placeDetails.forEach((detail, index) => {
-                            if (detail.lat && detail.lon) { // 좌표가 있는 경우에만 마커 표시
+                            if (detail.lat && detail.lon) { 
                                 const marker = new kakao.maps.Marker({
                                     position: new kakao.maps.LatLng(detail.lat, detail.lon),
                                     map: map,
                                     image: stationMarkerImage
                                 });
 
-                                // KEPCO 원본 데이터에서 필요한 정보 (예: 급속/완속 충전기 대수)를 가져와 인포윈도우에 추가 가능
-                                // const rapidCnt = detail.originalData.rapidCnt || 0; 
-                                // const slowCnt = detail.originalData.slowCnt || 0;
-                                // const infoContent = `${detail.name} - ${detail.distance.toFixed(2)} km (급속:${rapidCnt}, 완속:${slowCnt})`;
-                                const infoContent = `${detail.name} - ${detail.distance.toFixed(2)} km`; // 단순화된 버전
+                                const infoContent = `${detail.name} - ${detail.distance.toFixed(2)} km`; 
                                 
                                 const infowindow = new kakao.maps.InfoWindow({
                                     content: `<div style="padding:5px 10px; font-size:14px; white-space: nowrap;">${infoContent}</div>`
@@ -242,28 +231,35 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
                                 });
                             }
 
-                            // 목록 아이템 생성
                             const div = document.createElement('div');
                             div.className = 'station-item';
-                            // KEPCO 원본 데이터의 다른 정보도 목록에 표시 가능
                             div.textContent = `${index + 1}. ${detail.name}` + 
                                               (detail.distance !== null ? ` - ${detail.distance.toFixed(2)} km` : ` (${detail.address || '주소 정보 없음'})`);
                             
+                            // 네이버 지도 좌표 이동부
                             div.addEventListener('click', () => {
-                                const queryName = detail.name.split('(')[0].trim();
-                                const url = `https://search.naver.com/search.naver?query=${encodeURIComponent(queryName)}`;
-                                window.open(url, '_blank');
+                                if (detail.lat && detail.lon) {
+                                    // 유효한 좌표가 있으면 지도를 해당 위치로 이동(panTo)
+                                    const moveLatLon = new kakao.maps.LatLng(detail.lat, detail.lon);
+                                    map.panTo(moveLatLon);
+                                } else {
+                                    // 좌표 정보가 없는 경우, 기존처럼 네이버 검색 실행
+                                    const queryName = detail.name.split('(')[0].trim();
+                                    const url = `https://search.naver.com/search.naver?query=${encodeURIComponent(queryName)}`;
+                                    window.open(url, '_blank');
+                                    console.warn(`좌표 정보가 없는 충전소(${detail.name}) 클릭됨. 네이버 검색으로 대체합니다.`);
+                                }
                             });
+
                             listContainer.appendChild(div);
                         });
 
-                        // 가장 가까운 충전소 하이라이트 (새로운 nearestPlaceForHighlight 사용)
                         if (nearestPlaceForHighlight && nearestPlaceForHighlight.lat && nearestPlaceForHighlight.lon) {
                             const nearestMarker = new kakao.maps.Marker({
                                 position: new kakao.maps.LatLng(nearestPlaceForHighlight.lat, nearestPlaceForHighlight.lon),
                                 map: map,
                                 image: new kakao.maps.MarkerImage(
-                                    'https://cdn-icons-png.flaticon.com/512/3103/3103446.png', // 다른 아이콘 사용 가능(추천요망...)
+                                    'https://cdn-icons-png.flaticon.com/512/3103/3103446.png', 
                                     new kakao.maps.Size(40, 40)
                                 )
                             });
@@ -293,7 +289,7 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
         });
 }
 
-// 카카오맵 API 및 서비스 라이브러리 로드 후 실행 - 한번 건들였다가 생지옥을 맛봄봄
+// 카카오맵 API 및 서비스 라이브러리 로드 후 실행
 kakao.maps.load(function() {
     console.log("카카오맵 API 및 서비스 라이브러리 로드 완료!");
     loadMapAndStations();
