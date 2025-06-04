@@ -1,0 +1,125 @@
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function loadMapAndStations() {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    
+    const container = document.getElementById('map');
+    const map = new kakao.maps.Map(container, {
+      center: new kakao.maps.LatLng(lat, lon),
+      level: 5
+    });
+
+    const zoomControl = new kakao.maps.ZoomControl();
+    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+    new kakao.maps.Marker({
+      position: new kakao.maps.LatLng(lat, lon),
+      map: map
+    });
+
+    const markerImage = new kakao.maps.MarkerImage(
+      'https://cdn-icons-png.flaticon.com/512/3103/3103446.png',
+      new kakao.maps.Size(32, 32)
+    );
+
+    let nearestDistance = Infinity;
+    let nearestPlace = null;
+    let placeDistances = [];
+
+    fetch(`/stations?lat=${lat}&lon=${lon}`)
+      .then(response => response.json())
+      .then(data => {
+        const listContainer = document.getElementById('list-container');
+        listContainer.innerHTML = '';
+
+        if (data && data.data) {
+          for (let i = 0; i < data.data.length; i++) {
+            const station = data.data[i];
+            const distance = getDistance(lat, lon, station.lat, station.lon);
+            placeDistances.push({ name: station.name, distance: distance, status: station.status });
+
+            if (distance < nearestDistance) {
+              nearestDistance = distance;
+              nearestPlace = station;
+            }
+
+            const marker = new kakao.maps.Marker({
+              position: new kakao.maps.LatLng(station.lat, station.lon),
+              map: map,
+              image: markerImage
+            });
+
+            const infoWindow = new kakao.maps.InfoWindow({
+              content: `<div style="padding:5px 10px; font-size:14px; white-space: nowrap;">${station.name} - ${distance.toFixed(2)} km</div>`
+            });
+
+            kakao.maps.event.addListener(marker, 'mouseover', () => infoWindow.open(map, marker));
+            kakao.maps.event.addListener(marker, 'mouseout', () => infoWindow.close());
+            kakao.maps.event.addListener(marker, 'click', () => {
+              const link = `https://map.kakao.com/link/to/${station.name},${station.lat},${station.lon}`;
+              window.open(link, '_blank');
+            });
+          }
+
+          if (nearestPlace) {
+            const marker = new kakao.maps.Marker({
+              position: new kakao.maps.LatLng(nearestPlace.lat, nearestPlace.lon),
+              map: map,
+              image: new kakao.maps.MarkerImage(
+                'https://cdn-icons-png.flaticon.com/512/3103/3103446.png',
+                new kakao.maps.Size(40, 40)
+              )
+            });
+
+            const infoWindow = new kakao.maps.InfoWindow({
+              content: `<div style="padding:5px 10px; font-size:14px; font-weight:bold; white-space: nowrap;">🔋 가장 가까운 충전소 - ${nearestPlace.name} (${nearestDistance.toFixed(2)} km)</div>`
+            });
+            infoWindow.open(map, marker);
+
+            kakao.maps.event.addListener(marker, 'click', () => {
+              const link = `https://map.kakao.com/link/to/${nearestPlace.name},${nearestPlace.lat},${nearestPlace.lon}`;
+              window.open(link, '_blank');
+            });
+          }
+
+          placeDistances.sort((a, b) => a.distance - b.distance);
+          placeDistances.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'station-item';
+            div.textContent = `${index + 1}. ${item.name} - ${item.distance.toFixed(2)} km`;
+            div.addEventListener('click', () => {
+              const url = `https://search.naver.com/search.naver?query=${encodeURIComponent(item.name)}`;
+              window.open(url, '_blank');
+            });
+            listContainer.appendChild(div);
+          });
+        } else {
+          listContainer.innerHTML = '충전소 정보를 불러오는 데 실패했습니다.';
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('list-container').innerHTML = '충전소 정보를 불러오는 데 실패했습니다.';
+      });
+  }, function() {
+    alert('현재 위치를 가져올 수 없습니다.');
+  });
+}
+
+window.onload = loadMapAndStations;
+
+document.getElementById('reload-btn').addEventListener('click', function() {
+  document.getElementById('list-container').innerHTML = '위치를 다시 불러오는 중...';
+  loadMapAndStations();
+});

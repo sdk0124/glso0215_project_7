@@ -20,7 +20,7 @@ db.sqlite3
 staticfiles/
 media/
 
-# 환경변수
+# 환경변수 
 .env
 
 # migration cache
