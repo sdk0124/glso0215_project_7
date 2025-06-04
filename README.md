@@ -39,9 +39,18 @@
 
 ### 실행 방법
 
-``` 
+```
+> pip install -r downloads.txt
 > python manage.py runserver [포트번호(선택사항)]
 ```
+
+명령어 실행 후 아래와 같은 메시지가 출력됩니다. **(포트/IP 주소 지정 여부에 따라 서버 주소는 달라질 수 있습니다.)**
+
+`Starting development server at http://127.0.0.1:8000/`
+
+<br>
+
+위에 표시된 서버 주소로 접속 시 로컬에서 프로젝트를 확인할 수 있습니다.
 
 ### 기본 목표
 
