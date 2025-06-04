@@ -1,0 +1,33 @@
+# python
+*.pyc
+__pycache__/
+
+# vscode, ide
+.vscode/
+.idea/
+
+# mac
+.DS_Store
+
+# windows
+Thumbs.db
+desktop.ini
+
+# database
+db.sqlite3
+
+# django static, media
+staticfiles/
+media/
+
+# 환경변수
+.env
+
+# migration cache
+*.log
+*.pot
+*.py[cod]
+*$py.class
+
+# ===== Jupyter Notebooks (선택적) =====
+.ipynb_checkpoints/
