@@ -8,11 +8,15 @@
 
 ## 컨트리뷰션 단계
 
-**1. 이 깃 레포지토리를 fork 해 본인의 레포지토리를 생성해 주세요**
+**1. 컨트리뷰션 주제와 내용을 포함하는 issue 를 생성해 주세요**
 
 <br>
 
-**2. fork한 레포지토리를 clone해 로컬에서 작업해 주시면 됩니다.**
+**2. 이 깃 레포지토리를 fork 해 본인의 레포지토리를 생성해 주세요.**
+
+<br>
+
+**3. fork한 레포지토리를 clone해 로컬에서 작업해 주시면 됩니다.**
 
 ```
 git clone https://github.com/your-username/your-project.git
@@ -21,13 +25,15 @@ cd your-project
 
 <br>
 
-**3. 본인이 작업할 브랜치를 만들어주시면 됩니다.**
+**4. 본인이 작업할 브랜치를 만들어주시면 됩니다.**
 
-`git checkout -b branch-name`
+```
+git checkout -b branch-name
+```
 
 <br>
 
-**4. 컨트리뷰션 사항에 대해 작업하신 후, 본인의 작업 사항에 대해서 add와 commit 해주시면 됩니다.**
+**5. 컨트리뷰션 사항에 대해 작업하신 후, 본인의 작업 사항에 대해서 add와 commit 해주시면 됩니다.**
 
 ```
 git add .
@@ -36,15 +42,19 @@ git commit -m "commit-name"
 
 <br>
 
-**5. 원격 저장소로 push 해주시면 됩니다.**
-   
-`git push origin branch-name`
+**6. 원격 저장소로 push 해주시면 됩니다.**
+
+```
+git push origin branch-name
+```
 
 <br>
 
-**6. 깃허브에서 Pull Request 해주시면 됩니다.**
+**7. 깃허브에서 Pull Request 해주시면 됩니다.**
 
-Pull Request 시 ***컨트리뷰션 주제와 내용에 대한 설명***을 포함하는 Pull Request 해주시면 됩니다.
+Pull Request 시, **(Closes #issue-number)를 본문에 포함**해 관련 issue 를 연동해 주세요.
+
+필요 시 추가 설명도 작성해 주시면 됩니다.
 
 <br>
 
