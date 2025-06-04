@@ -143,8 +143,8 @@ function fetchStations(currentLat, currentLon, metroCd, cityCd) {
     });
 
     const stationMarkerImage = new kakao.maps.MarkerImage(
-        '',
-        new kakao.maps.Size(32, 32)
+        'https://cdn-icons-png.flaticon.com/512/3103/3103446.png',
+        new kakao.maps.Size(24, 24)
     );
 
     // 카카오 Geocoder 객체 (주소->좌표 변환용)
