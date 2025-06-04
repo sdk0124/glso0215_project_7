@@ -300,5 +300,4 @@ kakao.maps.load(function() {
         }
         loadMapAndStations();
     });
->>>>>>> master
 });
