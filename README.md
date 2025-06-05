@@ -69,3 +69,8 @@
 | [<img src="https://github.com/BandoSouth.png" width="100px">](https://github.com/BandoSouth) | [<img src="https://github.com/wkddnjswns.png" width="100px">](https://github.com/wkddnjswns) | [<img src="https://github.com/sdk0124.png" width="100px">](https://github.com/sdk0124) |
 | :----------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------: |
 |                         [손희철](https://github.com/BandoSouth)                          |                         [장원준](https://github.com/Kiyeon-Nam)                          |                         [김성덕](https://github.com/sdk0124)
+
+### 컨트리뷰트 관련 참고 문서
+CONTRIBUTING.md 파일을 참고해주세요
+<br>
+[CONTRIBUTING.md](https://github.com/sdk0124/glso0215_project_7/blob/main/CONTRIBUTING.md)
