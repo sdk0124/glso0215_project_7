@@ -23,6 +23,13 @@ git clone https://github.com/your-username/your-project.git
 cd your-project
 ```
 
+
+**저희 프로젝트는 djagno, requests 라이브러리를 사용합니다. 작업 전에 먼저 이 두 프로그램이 설치되어 있는 지 확인해주시고, 설치되어 있지 않다면 다음 명령어를 실행해 주시기 바랍니다.**
+
+```
+pip install -r downloads.txt
+```
+
 <br>
 
 **4. 본인이 작업할 브랜치를 만들어주시면 됩니다.**
@@ -55,6 +62,22 @@ git push origin branch-name
 Pull Request 시, **(Closes #issue-number)를 본문에 포함**해 관련 issue 를 연동해 주세요.
 
 필요 시 추가 설명도 작성해 주시면 됩니다.
+
+Pull Request 시, **pull_request_template.md** 파일을 참고하여 형식에 맞게 작성해 주시면 됩니다.
+
+1. **Related Issue**
+<br>
+본인이 컨트리뷰션한 이슈 제목을 간단히 기입해 주시면 됩니다.
+2. **Category**
+<br>
+본인이 컨트리뷰션한 항목에 체크하시면 됩니다.
+* Bug fix : 버그 수정
+* New Feature : 새로운 기능 구현
+* Documentation update : 문서 업데이트
+
+3. **Description**
+<br>
+본인이 어떤 부분을 컨트리뷰션 하셨는 지 설명을 작성해 주시면 됩니다.
 
 <br>
 
