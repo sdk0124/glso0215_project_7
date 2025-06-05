@@ -66,17 +66,25 @@ Pull Request 시, **(Closes #issue-number)를 본문에 포함**해 관련 issue
 Pull Request 시, **pull_request_template.md** 파일을 참고하여 형식에 맞게 작성해 주시면 됩니다.
 
 1. **Related Issue**
-<br>
+
 본인이 컨트리뷰션한 이슈 제목을 간단히 기입해 주시면 됩니다.
-2. **Category**
+
 <br>
+
+2. **Category**
+   
 본인이 컨트리뷰션한 항목에 체크하시면 됩니다.
+
 * Bug fix : 버그 수정
+  
 * New Feature : 새로운 기능 구현
+  
 * Documentation update : 문서 업데이트
 
-3. **Description**
 <br>
+
+3. **Description**
+
 본인이 어떤 부분을 컨트리뷰션 하셨는 지 설명을 작성해 주시면 됩니다.
 
 <br>
