@@ -72,3 +72,33 @@ main {
   background: #e8f0fe;
   cursor: pointer;
 }
+
+/*
+style for progress-bar
+*/
+
+.loading-wrapper {
+  text-align: center;
+}
+
+.loading-bar-bg {
+  width: 80%;
+  height: 10px;
+  background-color: #eee;
+  margin: 10px auto;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 5px;
+  animation: progressAnim 2s infinite;
+}
+
+@keyframes progressAnim {
+  0% { width: 0%; }
+  50% { width: 80%; }
+  100% { width: 0%; }
+}

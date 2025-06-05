@@ -36,6 +36,20 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+/*
+UI: Showing prograss-bar
+*/
+function showLoadingMessage(container, message) {
+    container.innerHTML = `
+      <div class="loading-wrapper">
+        <p>${message}</p>
+        <div class="loading-bar-bg">
+          <div class="loading-bar-fill"></div>
+        </div>
+      </div>
+    `;
+  }
+
   /*
   지도와 충전소 정보를 로드하는 주 함수 부분(loadMapAndStations, fetchStations)
 
@@ -50,13 +64,13 @@ function getDistance(lat1, lon1, lat2, lon2) {
 
 function loadMapAndStations() {
   const listContainer = document.getElementById('list-container');
-  listContainer.innerHTML = '현재 위치를 찾는 중...';
+  showLoadingMessage(listContainer,'현재 위치를 찾는 중...');
 
   navigator.geolocation.getCurrentPosition(function(position) {
     const userLat = position.coords.latitude;
     const userLon = position.coords.longitude;
 
-    listContainer.innerHTML = '행정구역 코드 찾는 중 (카카오맵 API 호출)...';
+    showLoadingMessage(listContainer, '행정구역 코드 찾는 중 (카카오맵 API 호출)...');
 
     const geocoder = new kakao.maps.services.Geocoder();
 
@@ -118,7 +132,7 @@ function loadMapAndStations() {
 // 지정된 지역 코드로 충전소 정보를 서버에 요청하고 지도를 업데이트하는 함수
 function fetchStations(currentLat, currentLon, metroCd, cityCd) {
     const listContainer = document.getElementById('list-container');
-    listContainer.innerHTML = '충전소 정보 로딩 중...';
+    showLoadingMessage(listContainer, '충전소 정보 로딩 중...');
 
     let fetchUrl = `/stations/?metroCd=${metroCd}`;
     if (cityCd && cityCd.trim()) {
