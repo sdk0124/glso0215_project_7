@@ -432,7 +432,8 @@
 //     loadMapAndStations();
 //   });
 // });
-// 전역 변수 정의
+
+
 let map;
 let stationList = [];
 let currentLat, currentLon;
@@ -626,6 +627,8 @@ function fetchStations(lat, lon, metroCd, cityCd) {
 
   const geocoder = new kakao.maps.services.Geocoder();
 
+
+  // 여기서부터 충전소 정보를 가져오는 부분을 일부 수정 - 06/08
   fetch(url)
     .then((res) => res.json())
     .then((data) => {
@@ -634,10 +637,17 @@ function fetchStations(lat, lon, metroCd, cityCd) {
         rawStations.map(
           (station) =>
             new Promise((resolve) => {
-              const addr = station.stnAddr,
-                name = station.stnPlace || "이름없음";
+              const addr = station.stnAddr;
+              const name = station.stnPlace || "이름없음";
               if (!addr)
-                return resolve({ name, lat: null, lon: null, distance: null });
+                return resolve({
+                  name,
+                  lat: null,
+                  lon: null,
+                  distance: null,
+                  originalData: station, // API에서 호출한 값 중 상세 정보 저장(originalData) - 변수 이름 마음에 안듬 stationinfo가 더 낫지 않겠나(소감)
+                });
+
               geocoder.addressSearch(addr, (results, status) => {
                 if (
                   status === kakao.maps.services.Status.OK &&
@@ -650,9 +660,18 @@ function fetchStations(lat, lon, metroCd, cityCd) {
                     lat: lat2,
                     lon: lon2,
                     distance: getDistance(lat, lon, lat2, lon2),
+                    address: addr, // 주소 정보도 함께 저장
+                    originalData: station, // 상세 정보 저장
                   });
                 } else {
-                  resolve({ name, lat: null, lon: null, distance: null });
+                  resolve({
+                    name,
+                    lat: null,
+                    lon: null,
+                    distance: null,
+                    address: addr,
+                    originalData: station, // 상세 정보 저장
+                  });
                 }
               });
             })
@@ -664,6 +683,10 @@ function fetchStations(lat, lon, metroCd, cityCd) {
         (a, b) => (a.distance ?? 99999) - (b.distance ?? 99999)
       );
 
+      let detailInfoWindow = new kakao.maps.InfoWindow({
+        removable: true,
+      });
+
       stationList.forEach((detail) => {
         if (detail.lat && detail.lon) {
           const marker = new kakao.maps.Marker({
@@ -671,19 +694,34 @@ function fetchStations(lat, lon, metroCd, cityCd) {
             map,
             image: markerImg,
           });
+          // 마커 클릭 이벤트
+          kakao.maps.event.addListener(marker, "click", () => {
+            // 따로 조치 없이 html 여기서 구현
+            const content = `
+              <div style="padding:10px; min-width:280px; font-size:14px; line-height:1.6;">
+                <strong style="font-size:16px;">${detail.name}</strong><br>
+                <span style="color:#666;">${detail.address}</span><hr style="margin: 8px 0;">
+                ⚡️ 급속충전기: <strong>${detail.originalData.rapidCnt || 0}대</strong><br>
+                🔌 완속충전기: <strong>${detail.originalData.slowCnt || 0}대</strong><br>
+                🚗 지원차종: <span style="font-size:12px;">${detail.originalData.carType || '정보 없음'}</span><br>
+                <a href="https://map.kakao.com/link/to/${detail.name},${detail.lat},${detail.lon}" target="_blank" style="color:#007bff; text-decoration:none; margin-top:8px; display:inline-block;">길찾기</a>
+              </div>
+            `;
+            
+            detailInfoWindow.setContent(content);
+            detailInfoWindow.open(map, marker);
+          });
 
-          const infoContent = `${detail.name} - ${detail.distance.toFixed(
-            2
-          )} km`;
-          const infowindow = new kakao.maps.InfoWindow({
-            content: `<div style="padding:5px 10px; font-size:14px; white-space: nowrap;">${infoContent}</div>`,
+          const simpleInfoContent = `${detail.name} - ${detail.distance.toFixed(2)} km`;
+          const simpleInfowindow = new kakao.maps.InfoWindow({
+            content: `<div style="padding:5px 10px; font-size:14px; white-space: nowrap;">${simpleInfoContent}</div>`,
           });
 
           kakao.maps.event.addListener(marker, "mouseover", () =>
-            infowindow.open(map, marker)
+            simpleInfowindow.open(map, marker)
           );
           kakao.maps.event.addListener(marker, "mouseout", () =>
-            infowindow.close()
+            simpleInfowindow.close()
           );
         }
       });
@@ -697,24 +735,31 @@ function fetchStations(lat, lon, metroCd, cityCd) {
           position: new kakao.maps.LatLng(nearest.lat, nearest.lon),
           map,
           image: new kakao.maps.MarkerImage(
-            "https://cdn-icons-png.flaticon.com/512/3103/3103446.png", // 같은 아이콘이지만 크기만 다름
-            new kakao.maps.Size(40, 40) // 👈 더 큰 아이콘
+            "https://cdn-icons-png.flaticon.com/512/3103/3103446.png",  // 강조된 마커 이미지
+            new kakao.maps.Size(40, 40)
           ),
         });
 
         const infoWindow = new kakao.maps.InfoWindow({
-          content: `<div style="padding:5px 10px; font-size:14px; font-weight:bold; white-space: nowrap;">
-      🔋 가장 가까운 충전소 - ${nearest.name} (${nearest.distance.toFixed(
-            2
-          )} km)
-    </div>`,
+          content: `<div style="padding:5px 10px; font-size:14px; font-weight:bold; white-space: nowrap;">🔋 가장 가까운 충전소 - ${nearest.name} (${nearest.distance.toFixed(2)} km)</div>`,
         });
 
         infoWindow.open(map, highlightMarker);
-
+        // 강조된 마커 클릭 이벤트
         kakao.maps.event.addListener(highlightMarker, "click", () => {
-          const link = `https://map.kakao.com/link/to/${nearest.name},${nearest.lat},${nearest.lon}`;
-          window.open(link, "_blank");
+          const content = `
+            <div style="padding:10px; min-width:280px; font-size:14px; line-height:1.6;">
+              <strong style="font-size:16px;">${nearest.name}</strong><br>
+              <span style="color:#666;">${nearest.address}</span><hr style="margin: 8px 0;">
+              ⚡️ 급속충전기: <strong>${nearest.originalData.rapidCnt || 0}대</strong><br>
+              🔌 완속충전기: <strong>${nearest.originalData.slowCnt || 0}대</strong><br>
+              🚗 지원차종: <span style="font-size:12px;">${nearest.originalData.carType || '정보 없음'}</span><br>
+              <a href="https://map.kakao.com/link/to/${nearest.name},${nearest.lat},${nearest.lon}" target="_blank" style="color:#007bff; text-decoration:none; margin-top:8px; display:inline-block;">길찾기</a>
+            </div>
+          `;
+          
+          detailInfoWindow.setContent(content);
+          detailInfoWindow.open(map, highlightMarker);
         });
       }
 
