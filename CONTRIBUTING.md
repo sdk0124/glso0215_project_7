@@ -30,6 +30,12 @@ cd your-project
 pip install -r downloads.txt
 ```
 
+**초기 설치 단계에서 적용되지않은 마이그레이션이 있습니다. 프로그램을 실행하기 전에 다음 명령어를 실행해 주시기 바랍니다.**
+
+```
+python manage.py migrate
+```
+
 <br>
 
 **4. 본인이 작업할 브랜치를 만들어주시면 됩니다.**

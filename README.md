@@ -46,6 +46,7 @@
 
 ```
 > pip install -r downloads.txt
+> python manage.py migrate
 > python manage.py runserver [포트번호(선택사항)]
 ```
 
