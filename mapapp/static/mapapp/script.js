@@ -257,6 +257,11 @@ function fetchStations(lat, lon, metroCd, cityCd) {
           kakao.maps.event.addListener(marker, "mouseout", () =>
             infowindow.close()
           );
+	
+	  kakao.maps.event.addListener(marker, "click", () => {
+      const link = `https://map.kakao.com/link/to/${detail.name},${detail.lat},${detail.lon}`;
+      window.open(link, "_blank");
+    });
         }
       });
 
