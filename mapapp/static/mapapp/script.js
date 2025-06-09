@@ -577,6 +577,13 @@ function loadMapAndStations() {
   const listContainer = document.getElementById("list-container");
   showLoadingMessage(listContainer, "현재 위치를 찾는 중...");
 
+    // 기존 지도가 있다면 완전히 제거
+  if (map) {
+    map = null;
+    const mapContainer = document.getElementById("map");
+    mapContainer.innerHTML = '';
+  }
+
   navigator.geolocation.getCurrentPosition(
     (position) => {
       currentLat = position.coords.latitude;
