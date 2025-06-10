@@ -451,6 +451,48 @@ function renderStationPage(pageNumber) {
   currentItems.forEach((detail, index) => {
     const div = document.createElement("div");
     div.className = "station-item";
+
+    // 즐겨찾기 여부 확인
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    const isFavorite = favorites.some((fav) => fav.name === detail.name && fav.address === detail.address);
+
+    // 충전소 이름 + 거리 표시
+    const infoSpan = document.createElement("span");
+    infoSpan.textContent =
+      `${startIdx + index + 1}. ${detail.name}` +
+      (detail.distance !== null
+        ? ` - ${detail.distance.toFixed(2)} km`
+        : ` (${detail.address || "주소 정보 없음"})`);
+    infoSpan.style.marginRight = "10px";
+
+    // 즐겨찾기 버튼
+    const favBtn = document.createElement("button");
+    favBtn.textContent = isFavorite ? "⭐" : "☆";
+    favBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // 클릭 시 지도 이동 방지
+
+      let updatedFavorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+      if (isFavorite) {
+        // 즐겨찾기 해제
+        updatedFavorites = updatedFavorites.filter(
+          (fav) => !(fav.name === detail.name && fav.address === detail.address)
+        );
+      } else {
+        // 즐겨찾기 추가
+        updatedFavorites.push({
+          name: detail.name,
+          address: detail.address,
+          lat: detail.lat,
+          lon: detail.lon,
+          distance: detail.distance,
+        });
+      }
+
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      renderStationPage(currentPage); // 다시 렌더링 (토글 반영)
+    });
+
     div.textContent =
       `${startIdx + index + 1}. ${detail.name}` +
       (detail.distance !== null
@@ -470,6 +512,9 @@ function renderStationPage(pageNumber) {
       }
     });
 
+    // DOM 구성
+    div.appendChild(infoSpan);
+    div.appendChild(favBtn);
     listContainer.appendChild(div);
   });
 
