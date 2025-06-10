@@ -70,11 +70,11 @@ function renderStationPage(pageNumber) {
       renderStationPage(currentPage); // 다시 렌더링 (토글 반영)
     });
 
-    div.textContent =
-      `${startIdx + index + 1}. ${detail.name}` +
-      (detail.distance !== null
-        ? ` - ${detail.distance.toFixed(2)} km`
-        : ` (${detail.address || "주소 정보 없음"})`);
+    //div.textContent =
+    //  `${startIdx + index + 1}. ${detail.name}` +
+    //  (detail.distance !== null
+    //    ? ` - ${detail.distance.toFixed(2)} km`
+    //    : ` (${detail.address || "주소 정보 없음"})`);
 
     div.addEventListener("click", () => {
       if (detail.lat && detail.lon) {
@@ -355,7 +355,25 @@ function fetchStations(lat, lon, metroCd, cityCd) {
 
 kakao.maps.load(() => {
   loadMapAndStations();
+
   document
     .getElementById("reload-btn")
     .addEventListener("click", loadMapAndStations);
+
+  const toggleBtn = document.getElementById("toggle-favorites-btn");
+  let showingFavorites = false;
+
+  toggleBtn.addEventListener("click", () => {
+    if (!showingFavorites) {
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      stationList = favorites;
+      renderStationPage(1);
+      toggleBtn.textContent = "📍 전체 충전소 보기";
+      showingFavorites = true;
+    } else {
+      loadMapAndStations();
+      toggleBtn.textContent = "⭐ 즐겨찾기만 보기";
+      showingFavorites = false;
+    }
+  });
 });
