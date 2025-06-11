@@ -3,6 +3,7 @@ let stationList = [];
 let currentLat, currentLon;
 let itemsPerPage = 7;
 let currentPage = 1;
+let showingFavorites = false;
 
 function showToastMessage(message) {
   const toast = document.getElementById("toast-message");
@@ -393,7 +394,26 @@ function fetchStations(lat, lon, metroCd, cityCd) {
 
 kakao.maps.load(() => {
   loadMapAndStations();
+
   document
     .getElementById("reload-btn")
     .addEventListener("click", loadMapAndStations);
+
+  const toggleBtn = document.getElementById("toggle-favorites-btn");
+  let showingFavorites = false;
+
+  toggleBtn.addEventListener("click", () => {
+    if (!showingFavorites) {
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      stationList = favorites;
+      renderStationPage(1);
+      toggleBtn.textContent = "📍 전체 충전소 보기";
+      showingFavorites = true;
+    } else {
+      loadMapAndStations();
+      toggleBtn.textContent = "⭐ 즐겨찾기만 보기";
+      showingFavorites = false;
+    }
+  });
 });
+
