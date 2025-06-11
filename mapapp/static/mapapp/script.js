@@ -164,6 +164,9 @@ const KEPCO_METRO_CD_FROM_KAKAO_NAME = {
   제주특별자치도: "39",
 };
 
+var curLon = null;
+var curLat = null; 
+
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -192,6 +195,9 @@ function loadMapAndStations() {
     (position) => {
       currentLat = position.coords.latitude;
       currentLon = position.coords.longitude;
+
+      curLat = currentLat;
+      curLon = currentLon;
 
       const geocoder = new kakao.maps.services.Geocoder();
       geocoder.coord2RegionCode(currentLon, currentLat, (result, status) => {
@@ -314,7 +320,10 @@ function fetchStations(lat, lon, metroCd, cityCd) {
                 ⚡️ 급속충전기: <strong>${detail.originalData.rapidCnt || 0}대</strong><br>
                 🔌 완속충전기: <strong>${detail.originalData.slowCnt || 0}대</strong><br>
                 🚗 지원차종: <span style="font-size:12px;">${detail.originalData.carType || '정보 없음'}</span><br>
-                <a href="https://map.kakao.com/link/to/${detail.name},${detail.lat},${detail.lon}" target="_blank" style="color:#007bff; text-decoration:none; margin-top:8px; display:inline-block;">길찾기</a>
+                <button onclick="openDirections(${detail.lat}, ${detail.lon}, '${detail.name.replace(/'/g, "\\'")}')" 
+                  style="margin-top:8px; color:#fff; background-color:#007bff; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;">
+                  현재 위치에서 길찾기
+                </button>
               </div>
             `;
             
@@ -364,7 +373,10 @@ function fetchStations(lat, lon, metroCd, cityCd) {
               ⚡️ 급속충전기: <strong>${nearest.originalData.rapidCnt || 0}대</strong><br>
               🔌 완속충전기: <strong>${nearest.originalData.slowCnt || 0}대</strong><br>
               🚗 지원차종: <span style="font-size:12px;">${nearest.originalData.carType || '정보 없음'}</span><br>
-              <a href="https://map.kakao.com/link/to/${nearest.name},${nearest.lat},${nearest.lon}" target="_blank" style="color:#007bff; text-decoration:none; margin-top:8px; display:inline-block;">길찾기</a>
+              <button onclick="openDirections(${nearest.lat}, ${nearest.lon}, '${nearest.name.replace(/'/g, "\\'")}')" 
+                style="margin-top:8px; color:#fff; background-color:#007bff; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;">
+                현재 위치에서 길찾기
+              </button>
             </div>
           `;
           
@@ -387,3 +399,31 @@ kakao.maps.load(() => {
     .getElementById("reload-btn")
     .addEventListener("click", loadMapAndStations);
 });
+
+function openDirections(destLat, destLon, destName) {
+  if (!navigator.geolocation) {
+    alert("이 브라우저에서는 현재 위치 기능이 지원되지 않습니다.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const newLat = pos.coords.latitude;
+      const newLon = pos.coords.longitude;
+
+      // 출발지, 도착지 이름 (한글 포함 인코딩)
+      const sName = encodeURIComponent("현재위치");
+      const eName = encodeURIComponent(destName);
+
+      // 카카오맵 길찾기 링크 URL 생성 (출발지 경도/위도, 도착지 경도/위도)
+      // const url = `https://map.kakao.com/link/to/${eName},${destLat},${destLon}?sX=${userLon}&sY=${userLat}&sName=${sName}`;
+
+      const url2 = `https://map.kakao.com/?eName=${eName}&eX=${destLon}&eY=${destLat}&sName=${sName}&sX=${curLon}&sY=${curLat}`;
+      window.open(url2, "_blank");
+    },
+    (err) => {
+      alert("현재 위치를 가져올 수 없습니다. 위치 접근을 허용해 주세요.");
+      console.error(err);
+    }
+  );
+}
