@@ -15,7 +15,10 @@
 <body>
   <header>
     <h2>📍 내 주변 전기차 충전소</h2>
-    <button id="reload-btn">🔄 위치 재탐색</button>
+    <div id="top-controls" style="display: flex; justify-content: flex-end; gap: 10px; padding: 10px;">
+      <button id="reload-btn">🔄 새로고침</button>
+      <button id="toggle-favorites-btn">⭐ 즐겨찾기만 보기</button>
+    </div>
   </header>
 
   <main>
@@ -28,5 +31,6 @@
   </main>
 
   <script src="{% static 'mapapp/script.js' %}" defer></script>
+  <div id="toast-message" class="toast" style="display: none;"></div>
 </body>
 </html>
