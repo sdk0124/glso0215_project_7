@@ -4,6 +4,16 @@ let currentLat, currentLon;
 let itemsPerPage = 7;
 let currentPage = 1;
 
+function showToastMessage(message) {
+  const toast = document.getElementById("toast-message");
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 2000);
+}
+
 function renderStationPage(pageNumber) {
   currentPage = pageNumber;
   const listContainer = document.getElementById("list-container");
@@ -43,6 +53,7 @@ function renderStationPage(pageNumber) {
         updatedFavorites = updatedFavorites.filter(
           (fav) => !(fav.name === detail.name && fav.address === detail.address)
         );
+	showToastMessage("⭐ 즐겨찾기에서 삭제되었습니다.");
       } else {
         // 즐겨찾기 추가
         updatedFavorites.push({
@@ -52,6 +63,7 @@ function renderStationPage(pageNumber) {
           lon: detail.lon,
           distance: detail.distance,
         });
+	showToastMessage("⭐ 즐겨찾기에 추가되었습니다!");
       }
 
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
@@ -335,8 +347,6 @@ function fetchStations(lat, lon, metroCd, cityCd) {
           );
         }
       });
-
-      // 🔋 가장 가까운 충전소 마커 강조 표시
       const nearest = stationList.find(
         (item) => item.lat && item.lon && item.distance !== null
       );
@@ -345,7 +355,7 @@ function fetchStations(lat, lon, metroCd, cityCd) {
           position: new kakao.maps.LatLng(nearest.lat, nearest.lon),
           map,
           image: new kakao.maps.MarkerImage(
-            "https://cdn-icons-png.flaticon.com/512/3103/3103446.png",  // 강조된 마커 이미지
+            "https://cdn-icons-png.flaticon.com/512/3103/3103446.png",
             new kakao.maps.Size(40, 40)
           ),
         });
