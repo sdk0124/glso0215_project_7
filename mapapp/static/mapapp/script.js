@@ -3,6 +3,17 @@ let stationList = [];
 let currentLat, currentLon;
 let itemsPerPage = 7;
 let currentPage = 1;
+let showingFavorites = false;
+
+function showToastMessage(message) {
+  const toast = document.getElementById("toast-message");
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 2000);
+}
 
 function renderStationPage(pageNumber) {
   currentPage = pageNumber;
@@ -43,6 +54,7 @@ function renderStationPage(pageNumber) {
         updatedFavorites = updatedFavorites.filter(
           (fav) => !(fav.name === detail.name && fav.address === detail.address)
         );
+	showToastMessage("⭐ 즐겨찾기에서 삭제되었습니다.");
       } else {
         // 즐겨찾기 추가
         updatedFavorites.push({
@@ -52,6 +64,7 @@ function renderStationPage(pageNumber) {
           lon: detail.lon,
           distance: detail.distance,
         });
+	showToastMessage("⭐ 즐겨찾기에 추가되었습니다!");
       }
 
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
@@ -344,8 +357,6 @@ function fetchStations(lat, lon, metroCd, cityCd) {
           );
         }
       });
-
-      // 🔋 가장 가까운 충전소 마커 강조 표시
       const nearest = stationList.find(
         (item) => item.lat && item.lon && item.distance !== null
       );
@@ -354,7 +365,7 @@ function fetchStations(lat, lon, metroCd, cityCd) {
           position: new kakao.maps.LatLng(nearest.lat, nearest.lon),
           map,
           image: new kakao.maps.MarkerImage(
-            "https://cdn-icons-png.flaticon.com/512/3103/3103446.png",  // 강조된 마커 이미지
+            "https://cdn-icons-png.flaticon.com/512/3103/3103446.png",
             new kakao.maps.Size(40, 40)
           ),
         });
@@ -395,10 +406,29 @@ function fetchStations(lat, lon, metroCd, cityCd) {
 
 kakao.maps.load(() => {
   loadMapAndStations();
+
   document
     .getElementById("reload-btn")
     .addEventListener("click", loadMapAndStations);
+
+  const toggleBtn = document.getElementById("toggle-favorites-btn");
+  let showingFavorites = false;
+
+  toggleBtn.addEventListener("click", () => {
+    if (!showingFavorites) {
+      const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+      stationList = favorites;
+      renderStationPage(1);
+      toggleBtn.textContent = "📍 전체 충전소 보기";
+      showingFavorites = true;
+    } else {
+      loadMapAndStations();
+      toggleBtn.textContent = "⭐ 즐겨찾기만 보기";
+      showingFavorites = false;
+    }
+  });
 });
+
 
 function openDirections(destLat, destLon, destName) {
   if (!navigator.geolocation) {
