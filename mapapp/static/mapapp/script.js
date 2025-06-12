@@ -339,7 +339,7 @@ function fetchStations(lat, lon, metroCd, cityCd) {
                 🚗 지원차종: <span style="font-size:12px;">${
                   detail.originalData.carType || '정보 없음'
                 }</span><br>
-                <a href="https://map.kakao.com/link/to/${detail.name},${
+                <a href="https://map.kakao.com/link/to/${detail.name} 전기차 충전소 ,${
               detail.lat
             },${
               detail.lon
@@ -403,7 +403,7 @@ function fetchStations(lat, lon, metroCd, cityCd) {
               🚗 지원차종: <span style="font-size:12px;">${
                 nearest.originalData.carType || '정보 없음'
               }</span><br>
-              <a href="https://map.kakao.com/link/to/${nearest.name},${
+              <a href="https://map.kakao.com/link/to/${nearest.name} 전기차 충전소,${
             nearest.lat
           },${
             nearest.lon
