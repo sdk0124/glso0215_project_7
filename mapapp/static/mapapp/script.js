@@ -67,6 +67,7 @@ function renderStationPage(pageNumber) {
           lat: detail.lat,
           lon: detail.lon,
           distance: detail.distance,
+          originalData: detail.originalData, // ✅ 필터링 시 필요한 상세정보!
         });
         showToastMessage('⭐ 즐겨찾기에 추가되었습니다!');
       }
@@ -431,7 +432,7 @@ kakao.maps.load(() => {
     .addEventListener('click', loadMapAndStations);
 
   const toggleBtn = document.getElementById('toggle-favorites-btn');
-  let showingFavorites = false;
+  // let showingFavorites = false;
 
   toggleBtn.addEventListener('click', () => {
     if (!showingFavorites) {
@@ -450,13 +451,34 @@ kakao.maps.load(() => {
 
 document.getElementById('applyFilterBtn').addEventListener('click', () => {
   const chargerType = document.getElementById('chargerType').value;
-  const minAvailable = document.getElementById('minAvailable').value;
+  const minAvailable = parseInt(
+    document.getElementById('minAvailable').value || '0'
+  );
 
   if (!currentLat || !currentLon) {
     showToastMessage('위치 정보를 먼저 가져오는 중입니다.');
     return;
   }
 
+  if (showingFavorites) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+    // 필터링 조건 적용
+    const filtered = favorites.filter((station) => {
+      const rapid = parseInt(station.originalData?.rapidCnt || 0);
+      const slow = parseInt(station.originalData?.slowCnt || 0);
+
+      if (chargerType === 'rapid') return rapid >= minAvailable;
+      if (chargerType === 'slow') return slow >= minAvailable;
+      return rapid + slow >= minAvailable; // both 또는 전체
+    });
+
+    stationList = filtered;
+    renderStationPage(1);
+    return;
+  }
+
+  // 즐겨찾기 모드가 아니라면 원래 API 호출
   const geocoder = new kakao.maps.services.Geocoder();
   geocoder.coord2RegionCode(currentLon, currentLat, (result, status) => {
     if (status === kakao.maps.services.Status.OK) {
