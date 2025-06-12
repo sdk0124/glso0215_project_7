@@ -455,10 +455,23 @@ kakao.maps.load(() => {
 
 document.getElementById('applyFilterBtn').addEventListener('click', () => {
   const chargerType = document.getElementById('chargerType').value;
-  const minAvailable = parseInt(
-    document.getElementById('minAvailable').value || '0'
-  );
+  const minAvailableInput = document.getElementById('minAvailable').value;
 
+  if (!chargerType) {
+    alert('충전기 종류를 선택해주세요.');
+    document.getElementById('chargerType').focus();
+    return;
+  }
+  
+  if (!minAvailableInput) {
+    alert('여유 충전기 수를 입력해주세요.');
+    return;
+  }
+  const minAvailable = parseInt(minAvailableInput.value);
+  if (isNaN(minAvailable) || minAvailable < 1) {
+    alert('여유 충전기 수는 1 이상의 숫자를 입력해주세요.');
+    return;
+  }
   if (!currentLat || !currentLon) {
     showToastMessage('위치 정보를 먼저 가져오는 중입니다.');
     return;

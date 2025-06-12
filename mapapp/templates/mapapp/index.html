@@ -16,7 +16,8 @@
     >
       <label for="chargerType">충전기 종류</label>
       <select id="chargerType">
-        <option value="both">전체</option>
+	<option value="" disabled selected>-- 충전기 종류 선택 --</option>
+	<option value="both">전체</option>
         <option value="rapid">급속충전기</option>
         <option value="slow">완속충전기</option>
       </select>
@@ -27,6 +28,7 @@
         id="minAvailable"
         placeholder="예: 2"
         style="width: 60px"
+	min="1"
       />
 
       <button id="applyFilterBtn">필터 적용</button>
