@@ -441,6 +441,7 @@ kakao.maps.load(() => {
   toggleBtn.addEventListener('click', () => {
     if (!showingFavorites) {
       const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      favorites.sort((a, b) => a.distance - b.distance);
       stationList = favorites;
       renderStationPage(1);
       toggleBtn.textContent = '📍 전체 충전소 보기';
@@ -467,7 +468,7 @@ document.getElementById('applyFilterBtn').addEventListener('click', () => {
     alert('여유 충전기 수를 입력해주세요.');
     return;
   }
-  const minAvailable = parseInt(minAvailableInput.value);
+  const minAvailable = parseInt(minAvailableInput);
   if (isNaN(minAvailable) || minAvailable < 1) {
     alert('여유 충전기 수는 1 이상의 숫자를 입력해주세요.');
     return;
@@ -479,7 +480,7 @@ document.getElementById('applyFilterBtn').addEventListener('click', () => {
 
   if (showingFavorites) {
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-
+    favorites.sort((a, b) => a.distance - b.distance);
     // 필터링 조건 적용
     const filtered = favorites.filter((station) => {
       const rapid = parseInt(station.originalData?.rapidCnt || 0);
