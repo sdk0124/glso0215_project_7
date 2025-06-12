@@ -426,10 +426,14 @@ function fetchStations(lat, lon, metroCd, cityCd) {
 
 kakao.maps.load(() => {
   loadMapAndStations();
-
   document
-    .getElementById('reload-btn')
-    .addEventListener('click', loadMapAndStations);
+  .getElementById('reload-btn')
+  .addEventListener('click', () => {
+    showingFavorites = false;
+    const toggleBtn = document.getElementById('toggle-favorites-btn');
+    toggleBtn.textContent = '⭐ 즐겨찾기만 보기';
+    loadMapAndStations();
+  });
 
   const toggleBtn = document.getElementById('toggle-favorites-btn');
   // let showingFavorites = false;
