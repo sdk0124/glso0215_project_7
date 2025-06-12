@@ -2,35 +2,63 @@
 
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>내 주변 전기차 충전소 찾기</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'mapapp/style.css' %}">
-  <!--<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5c2e50c05b44f33a9c61fedf9c1f4c74&libraries=services"></script>-->
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fffad3f2bee34bcc24e7d4a3b055b302&libraries=services"></script>
-  
+  <head>
+    <meta charset="UTF-8" />
+    <title>내 주변 전기차 충전소 찾기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'mapapp/style.css' %}" />
+    <!--<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5c2e50c05b44f33a9c61fedf9c1f4c74&libraries=services"></script>-->
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fffad3f2bee34bcc24e7d4a3b055b302&libraries=services"></script>
 
-</head>
-<body>
-  <header>
-    <h2>📍 내 주변 전기차 충전소</h2>
-    <div id="top-controls" style="display: flex; justify-content: flex-end; gap: 10px; padding: 10px;">
-      <button id="reload-btn">🔄 새로고침</button>
-      <button id="toggle-favorites-btn">⭐ 즐겨찾기만 보기</button>
-    </div>
-  </header>
+    <section
+      id="filter-section"
+      style="padding: 10px; display: flex; gap: 10px"
+    >
+      <label for="chargerType">충전기 종류</label>
+      <select id="chargerType">
+        <option value="both">전체</option>
+        <option value="rapid">급속충전기</option>
+        <option value="slow">완속충전기</option>
+      </select>
 
-  <main>
-    <div id="map"></div>
+      <label for="minAvailable">여유 충전기 수</label>
+      <input
+        type="number"
+        id="minAvailable"
+        placeholder="예: 2"
+        style="width: 60px"
+      />
 
-    <section id="station-list">
-      <h3>🚗 가까운 충전소 목록</h3>
-      <div id="list-container">로딩 중...</div>
+      <button id="applyFilterBtn">필터 적용</button>
     </section>
-  </main>
+  </head>
+  <body>
+    <header>
+      <h2>📍 내 주변 전기차 충전소</h2>
+      <div
+        id="top-controls"
+        style="
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          padding: 10px;
+        "
+      >
+        <button id="reload-btn">🔄 새로고침</button>
+        <button id="toggle-favorites-btn">⭐ 즐겨찾기만 보기</button>
+      </div>
+    </header>
 
-  <script src="{% static 'mapapp/script.js' %}" defer></script>
-  <div id="toast-message" class="toast" style="display: none;"></div>
-</body>
+    <main>
+      <div id="map"></div>
+
+      <section id="station-list">
+        <h3>🚗 가까운 충전소 목록</h3>
+        <div id="list-container">로딩 중...</div>
+      </section>
+    </main>
+
+    <script src="{% static 'mapapp/script.js' %}" defer></script>
+    <div id="toast-message" class="toast" style="display: none"></div>
+  </body>
 </html>
