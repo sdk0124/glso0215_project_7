@@ -21,20 +21,6 @@ h2 {
   font-size: 20px;
 }
 
-#reload-btn {
-  padding: 8px 12px;
-  font-size: 14px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#reload-btn:hover {
-  background: #0056b3;
-}
-
 main {
   padding: 16px;
 }
@@ -109,6 +95,10 @@ style for progress-bar
   }
 }
 
+/*
+style for pagination
+*/
+
 .pagination {
   text-align: center;
   margin-top: 16px;
@@ -154,3 +144,55 @@ style for progress-bar
   transition: all 0.3s ease;
 }
 
+/*
+style for favorite-btn
+*/
+.favorite-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.2);
+}
+
+/*
+style for reload-btn
+*/
+#reload-btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out
+}
+
+#reload-btn:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+}
+
+/*
+style for toggle-favorites button
+*/
+#toggle-favorites-btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #4caf50; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+#toggle-favorites-btn:hover {
+  background: #218838;
+  transform: scale(1.1);
+}

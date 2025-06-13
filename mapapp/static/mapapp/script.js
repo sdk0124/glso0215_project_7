@@ -45,6 +45,7 @@ function renderStationPage(pageNumber) {
 
     // 즐겨찾기 버튼
     const favBtn = document.createElement('button');
+    favBtn.className = 'favorite-btn';
     favBtn.textContent = isFavorite ? '⭐' : '☆';
     favBtn.addEventListener('click', (e) => {
       e.stopPropagation(); // 클릭 시 지도 이동 방지
@@ -71,6 +72,7 @@ function renderStationPage(pageNumber) {
         });
         showToastMessage('⭐ 즐겨찾기에 추가되었습니다!');
       }
+
 
       localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
       renderStationPage(currentPage); // 다시 렌더링 (토글 반영)
