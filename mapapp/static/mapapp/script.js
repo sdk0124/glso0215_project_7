@@ -341,7 +341,7 @@ function fetchStations(lat, lon, metroCd, cityCd) {
                 🚗 지원차종: <span style="font-size:12px;">${
                   detail.originalData.carType || '정보 없음'
                 }</span><br>
-                <a href="https://map.kakao.com/link/to/${detail.name},${
+                <a href="https://map.kakao.com/link/to/${detail.name} 전기차 충전소 ,${
               detail.lat
             },${
               detail.lon
@@ -405,7 +405,7 @@ function fetchStations(lat, lon, metroCd, cityCd) {
               🚗 지원차종: <span style="font-size:12px;">${
                 nearest.originalData.carType || '정보 없음'
               }</span><br>
-              <a href="https://map.kakao.com/link/to/${nearest.name},${
+              <a href="https://map.kakao.com/link/to/${nearest.name} 전기차 충전소,${
             nearest.lat
           },${
             nearest.lon
@@ -428,10 +428,14 @@ function fetchStations(lat, lon, metroCd, cityCd) {
 
 kakao.maps.load(() => {
   loadMapAndStations();
-
   document
-    .getElementById('reload-btn')
-    .addEventListener('click', loadMapAndStations);
+  .getElementById('reload-btn')
+  .addEventListener('click', () => {
+    showingFavorites = false;
+    const toggleBtn = document.getElementById('toggle-favorites-btn');
+    toggleBtn.textContent = '⭐ 즐겨찾기만 보기';
+    loadMapAndStations();
+  });
 
   const toggleBtn = document.getElementById('toggle-favorites-btn');
   // let showingFavorites = false;
@@ -439,6 +443,7 @@ kakao.maps.load(() => {
   toggleBtn.addEventListener('click', () => {
     if (!showingFavorites) {
       const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      favorites.sort((a, b) => a.distance - b.distance);
       stationList = favorites;
       renderStationPage(1);
       toggleBtn.textContent = '📍 전체 충전소 보기';
@@ -453,10 +458,23 @@ kakao.maps.load(() => {
 
 document.getElementById('applyFilterBtn').addEventListener('click', () => {
   const chargerType = document.getElementById('chargerType').value;
-  const minAvailable = parseInt(
-    document.getElementById('minAvailable').value || '0'
-  );
+  const minAvailableInput = document.getElementById('minAvailable').value;
 
+  if (!chargerType) {
+    alert('충전기 종류를 선택해주세요.');
+    document.getElementById('chargerType').focus();
+    return;
+  }
+  
+  if (!minAvailableInput) {
+    alert('여유 충전기 수를 입력해주세요.');
+    return;
+  }
+  const minAvailable = parseInt(minAvailableInput);
+  if (isNaN(minAvailable) || minAvailable < 1) {
+    alert('여유 충전기 수는 1 이상의 숫자를 입력해주세요.');
+    return;
+  }
   if (!currentLat || !currentLon) {
     showToastMessage('위치 정보를 먼저 가져오는 중입니다.');
     return;
@@ -464,7 +482,7 @@ document.getElementById('applyFilterBtn').addEventListener('click', () => {
 
   if (showingFavorites) {
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-
+    favorites.sort((a, b) => a.distance - b.distance);
     // 필터링 조건 적용
     const filtered = favorites.filter((station) => {
       const rapid = parseInt(station.originalData?.rapidCnt || 0);
