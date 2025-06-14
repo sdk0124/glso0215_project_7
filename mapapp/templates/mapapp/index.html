@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="{% static 'mapapp/style.css' %}" />
     <!--<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5c2e50c05b44f33a9c61fedf9c1f4c74&libraries=services"></script>-->
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fffad3f2bee34bcc24e7d4a3b055b302&libraries=services"></script>
-
+  </head>
+  <body>
     <section
       id="filter-section"
-      style="padding: 10px; display: flex; gap: 10px"
+      class="filter-container"
     >
       <label for="chargerType">충전기 종류</label>
       <select id="chargerType">
@@ -33,8 +34,7 @@
 
       <button id="applyFilterBtn">필터 적용</button>
     </section>
-  </head>
-  <body>
+
     <header>
       <h2>📍 내 주변 전기차 충전소</h2>
       <div
