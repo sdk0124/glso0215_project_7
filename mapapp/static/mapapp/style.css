@@ -196,3 +196,50 @@ style for toggle-favorites button
   background: #218838;
   transform: scale(1.1);
 }
+
+/*
+style for filter
+*/
+
+.filter-container {
+  background-color: #fbfafae7;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.filter-container label {
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+}
+
+.filter-container > * {
+  margin-right: 12px;
+}
+
+.filter-container select,
+.filter-container input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#applyFilterBtn {
+  padding: 7px 14px;
+  background-color: #706f6fe8;
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#applyFilterBtn:hover {
+  background-color: #4d4b4be8;
+  transform: scale(1.1);
+}
